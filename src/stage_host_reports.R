@@ -5,3 +5,8 @@ iTunes_Playlist_Scanner_UitzendMac <-
     escape_double = FALSE,
     trim_ws = TRUE
   )
+
+host1 <- iTunes_Playlist_Scanner_UitzendMac %>% 
+  filter(Folder == '\'R4.0' 
+         & Remark != 'no iVolume adjustment'
+         & Remark != 'album tag missing')
