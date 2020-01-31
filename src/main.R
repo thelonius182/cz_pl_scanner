@@ -29,3 +29,7 @@ flog.appender(appender.file("/Users/scanner/Logs/ipl_scanner.log"), name = "ipls
 flog.info("= = = = = iTunes Playlist Scanner start = = = = =", name = "ipls_log")
 
 config <- read_yaml("config.yaml")
+
+uzm_path <- "//UITZENDMAC-CZ/Radiologik/Schedule"
+log_path <- "//LOGMAC/Radiologik/Schedule"
+

@@ -10,3 +10,5 @@ host1 <- iTunes_Playlist_Scanner_UitzendMac %>%
   filter(Folder == '\'R4.0' 
          & Remark != 'no iVolume adjustment'
          & Remark != 'album tag missing')
+
+plws <- readRDS(file = "g://salsa//plws.RDS")
