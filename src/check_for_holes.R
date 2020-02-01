@@ -1,4 +1,7 @@
-# Ochtendeditie-scripts
+# verzamel scripts op FS ----
+# om te kijken of de reeks compleet is
+
+#+ OE ---- 
 # bv 005 - 2020-01-30_do07-180_ochtendeditie
 #    ^
 #    37
@@ -20,11 +23,11 @@ sched.Ia <- sched.I %>%
   ) %>%
   select(starts_with("slot"))
 
-# Overige scripts
+#+ overige UZM ----
 script_rgx <-
   ".*Schedule/[0-9]{3} - ([0-9]{4}-[0-9]{2}-[0-9]{2})_\\w{2}([0-9]{2})_([0-9]{3}).*"
 
-sched.II <- dir_info(path = cz_dir_path) %>%
+sched.II <- dir_info(path = uzm_path) %>%
   rename(dir_info_path = path) %>%
   filter(!str_detect(dir_info_path, "ochtendeditie")) %>%
   filter(str_detect(dir_info_path, "^.*? - [0-9]{4}-.*")) %>%
@@ -48,19 +51,7 @@ sched.IIa <- sched.II %>%
   ) %>%
   select(starts_with("slot"))
 
-# weekoverzicht met live-j/n indicaties
-sched.III <- readRDS(file = "g:\\salsa\\cur_cz_week_uzm.RDS")
-
-sched.IIIa <- sched.III %>%
-  filter(sched_playlist == "live > geen playlist nodig") %>%
-  mutate(
-    slot_start = cz_tijdstip,
-    slot_stop = slot_start + minutes(cz_slot_len),
-    slot_name = sys_audiotitel
-  ) %>%
-  select(starts_with("slot"))
-
-# Logmac erbij
+#+ overige LGM ----
 # //LOGMAC/Radiologik/Schedule/017 - 2020-01-30_do14_120_CZ-Archief
 sched.IV <- dir_info(path = log_path) %>%
   mutate(
@@ -82,14 +73,51 @@ sched.IVa <- sched.IV %>%
          slot_stop = slot_start + minutes(as.integer(script_length))) %>%
   select(slot_start, slot_stop, slot_name)
 
+# verzamel live-slots ----
+# scripts ontbreken niet als het slot live is
+# de rds-file is de recentste die klaargezet is door de RL-schedulecompiler
+sched.III <- readRDS(file = "g:\\salsa\\cur_cz_week_uzm.RDS")
+
+sched.IIIa <- sched.III %>%
+  filter(sched_playlist == "live > geen playlist nodig") %>%
+  mutate(
+    slot_start = cz_tijdstip,
+    slot_stop = slot_start + minutes(cz_slot_len),
+    slot_name = sys_audiotitel
+  ) %>%
+  select(starts_with("slot"))
+
+# zet alle slots in 1 lijst ----
+# alleen die van deze week; begin/eind in sched.III
 sched <- rbind(sched.Ia, sched.IIa, sched.IIIa, sched.IVa) %>%
+  filter(slot_start >= min(sched.III$cz_tijdstip)
+         & slot_start < max(sched.III$cz_tijdstip)) %>%
   arrange(slot_start)
 
-#+ controleer of er uren in de gids ontbreken ----
+# detecteer ontbrekende scripts ----
 gidsgaten <- sched %>%
-  filter(slot_start >= min(sched.III$cz_tijdstip) 
-         & slot_start <  max(sched.III$cz_tijdstip)) %>% 
   mutate(start_next = lead(slot_start)) %>%
   filter(!is.na(start_next) & start_next != slot_stop)
 
 n_gidsgaten <- gidsgaten %>% nrow
+
+#+ rapporteer ----
+ipls_notification <- ""
+
+if (n_gidsgaten > 0) {
+  
+  for (n1 in 1:n_gidsgaten) {
+    ipls_notification <-
+      paste0(ipls_notification,
+             "\n",
+             gidsgaten$slot_start[n1],
+             ", ",
+             gidsgaten$slot_name[n1])
+  }
+  
+  flog.info("1. Er ontbreken RL-scripts na elk van deze slots:", name = "ipls_log")
+  flog.info(ipls_notification, name = "ipls_log")
+  
+} else {
+  flog.info("1. RadioLogik is compleet.", name = "ipls_log")
+}
