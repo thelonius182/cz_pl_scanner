@@ -42,7 +42,8 @@ ipls_info_lgm.II <- ipls_info_lgm.I %>%
          & Remark != "album tag missing")
 
 # zet log/uzm op 1 lijst ----
-ipls_info <- rbind(ipls_info_uzm.II, ipls_info_lgm.II) %>% 
+# dwz alle playlists, niet alleen die van de huidige week
+ipls_info_all <- rbind(ipls_info_uzm.II, ipls_info_lgm.II) %>% 
   select(playlist = `Playlist name`, Aspect, Remark) %>% 
   arrange(playlist)
 
@@ -56,6 +57,11 @@ ipls_weekschema <- ipls_weekschema.I %>%
   mutate(playlist = paste0(mac, " - ", playlist),
          playtime_verwacht = as.numeric(duur)) %>% 
   select(playlist, playtime_verwacht)
+
+# ipls_info uitdunnen ----
+# alleen playlists huidige week 
+ipls_info <- ipls_info %>% 
+  filter(playlist %in% ipls_weekschema$playlist)
 
 # bepaal klaargezette lengtes ----
 ipls_playtime <- ipls_info %>% 

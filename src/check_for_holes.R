@@ -76,6 +76,7 @@ sched.IVa <- sched.IV %>%
 # verzamel live-slots ----
 # scripts ontbreken niet als het slot live is
 # de rds-file is de recentste die klaargezet is door de RL-schedulecompiler
+# NB - alleen live-slots dus data van uzm volstaat; lgm heeft geen live-slots
 sched.III <- readRDS(file = "g:\\salsa\\cur_cz_week_uzm.RDS")
 
 sched.IIIa <- sched.III %>%
