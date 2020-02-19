@@ -60,7 +60,7 @@ ipls_weekschema <- ipls_weekschema.I %>%
 
 # ipls_info uitdunnen ----
 # alleen playlists huidige week 
-ipls_info <- ipls_info %>% 
+ipls_info <- ipls_info_all %>% 
   filter(playlist %in% ipls_weekschema$playlist)
 
 # bepaal klaargezette lengtes ----
