@@ -37,7 +37,8 @@ sched.II <- dir_info(path = uzm_path) %>%
     script_length = sub(script_rgx, "\\3", dir_info_path, perl =
                           TRUE)
   ) %>%
-  select(starts_with("script"), dir_info_path)
+  select(starts_with("script"), dir_info_path) %>% 
+  filter(!str_starts(script_date, "//"))
 
 sched.IIa <- sched.II %>%
   mutate(
@@ -77,7 +78,7 @@ sched.IVa <- sched.IV %>%
 # scripts ontbreken niet als het slot live is
 # de rds-file is de recentste die klaargezet is door de RL-schedulecompiler
 # NB - alleen live-slots dus data van uzm volstaat; lgm heeft geen live-slots
-sched.III <- readRDS(file = "g:\\salsa\\cur_cz_week_uzm.RDS")
+sched.III <- readRDS(file = "/cz_salsa/cz_exchange/cur_cz_week_uzm.RDS")
 
 sched.IIIa <- sched.III %>%
   filter(sched_playlist == "live > geen playlist nodig") %>%

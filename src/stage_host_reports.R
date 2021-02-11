@@ -50,12 +50,12 @@ ipls_info_all <- rbind(ipls_info_uzm.II, ipls_info_lgm.II) %>%
 # lees brondata weekschema ----
 # (zoals ze deze week op de pdf staan die gebruikt wordt om de playlists te vullen)
 # NB - wordt klaargezet door RL-schedulecompiler
-ipls_weekschema.I <- readRDS(file = "g://salsa//plws.RDS")
+ipls_weekschema.I <- readRDS(file = "/cz_salsa/cz_exchange/cur_cz_week_uzm.RDS")
 
 ipls_weekschema <- ipls_weekschema.I %>% 
   filter(str_length(mac) > 0) %>% 
-  mutate(playlist = paste0(mac, " - ", playlist),
-         playtime_verwacht = as.numeric(duur)) %>% 
+  mutate(playlist = paste0(mac, " - ", sched_playlist),
+         playtime_verwacht = as.numeric(cz_slot_len)) %>% 
   select(playlist, playtime_verwacht)
 
 # ipls_info uitdunnen ----
