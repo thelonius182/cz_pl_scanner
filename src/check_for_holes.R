@@ -2,16 +2,16 @@
 # om te kijken of de reeks compleet is
 
 #+ OE ---- 
-# bv 005 - 2020-01-30_do07-180_ochtendeditie
+# bv //UITZENDMAC-2/macOS/Users/tech_1/Music/Radiologik/Schedule/021 - 2022-06-22_wo07-180_ochtendeditie
 #    ^
 #    37
 sched.I <- dir_info(path = uzm_path) %>%
   filter(str_detect(path, "ochtendeditie")) %>%
   mutate(
-    script_item = str_sub(path, 37, 39),
-    script_date = str_sub(path, 43, 52),
-    script_hour = str_sub(path, 56, 57),
-    script_length = str_sub(path, 59, 61)
+    script_item = sub(".*?/Schedule/\\b(\\d{3})\\b.*", "\\1", path, perl=TRUE, ignore.case=TRUE),
+    script_date = sub(".*?/Schedule/.*(\\d{4}-\\d{2}-\\d{2}).*", "\\1", path, perl=TRUE, ignore.case=TRUE),
+    script_hour = sub(".*?/Schedule/.*_\\w{2}(\\d{2}).*", "\\1", path, perl=TRUE, ignore.case=TRUE),
+    script_length = sub(".*?/Schedule/.*\\w{2}\\d{2}-(\\d{3}).*", "\\1", path, perl=TRUE, ignore.case=TRUE)
   ) %>%
   select(starts_with("script"),-script_item)
 
@@ -46,7 +46,7 @@ sched.IIa <- sched.II %>%
     slot_stop = slot_start + minutes(as.integer(script_length)),
     slot_name = str_replace(
       dir_info_path,
-      "//UITZENDMAC-CZ/Radiologik/Schedule/\\d{3} - [0-9]{4}-[0-9]{2}-[0-9]{2}_\\w{2}[0-9]{2}_[0-9]{3}_",
+      "//UITZENDMAC-2/tech_1/Music/Radiologik/Schedule/\\d{3} - [0-9]{4}-[0-9]{2}-[0-9]{2}_\\w{2}[0-9]{2}_[0-9]{3}_",
       ""
     )
   ) %>%

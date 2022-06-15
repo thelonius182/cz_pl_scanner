@@ -3,7 +3,7 @@ delta_min_allowed <- -0.17 # audio mag tot ca. 10 seconden te kort zijn
 delta_plus_allowed <- 2.5 # mag tot 2,5 minuut te lang zijn (vanwege hijack cue's)
 
 # hier staan de apple-script dumps
-ipls_dir_info_uzm <- dir_info(path = "//uitzendmac-cz/tech/Documents/Salsa/IPS-output")
+ipls_dir_info_uzm <- dir_info(path = "//uitzendmac-2/macOS/Users/tech_1/Documents/Salsa/IPS-output")
 ipls_dir_info_lgm <- dir_info(path = "//logmac/tech/Documents/Salsa/IPS-output")
 
 # namen vd actuele dumps  ----
@@ -19,14 +19,16 @@ ipls_file_lgm <- ipls_dir_info_lgm %>%
 ipls_info_uzm.I <- read_delim(file = as.character(ipls_file_uzm),
                             delim = "\t",
                             escape_double = FALSE,
-                            trim_ws = TRUE) %>% 
+                            trim_ws = TRUE,
+                            show_col_types = FALSE) %>% 
   # utf-8 van legacy mac-OS flat text wordt niet altijd goed herkend
   mutate(`Playlist name` = str_replace(`Playlist name`, "Ori.*press", "Oriënt Express"))
 
 ipls_info_lgm.I <- read_delim(file = as.character(ipls_file_lgm),
                             delim = "\t",
                             escape_double = FALSE,
-                            trim_ws = TRUE)
+                            trim_ws = TRUE,
+                            show_col_types = FALSE)
 
 # filter relevante kenmerken ----
 ipls_info_uzm.II <- ipls_info_uzm.I %>% 
@@ -71,11 +73,16 @@ ipls_playtime <- ipls_info %>%
 
 # rapporteer afwijkingen ----
 #+ lengtes ----
-ipls_length_check <- ipls_weekschema %>% 
-  left_join(ipls_playtime) %>% 
-  mutate(delta_in_minuten = playtime_aangetroffen - playtime_verwacht) %>% 
-  filter(delta_in_minuten > 0 & delta_in_minuten >= delta_plus_allowed 
-         | delta_in_minuten < 0 & delta_in_minuten <= delta_min_allowed)
+
+ipls_length_check <- 
+  suppressMessages(ipls_weekschema %>%
+                     left_join(ipls_playtime)
+  ) %>%
+  mutate(delta_in_minuten = playtime_aangetroffen - playtime_verwacht) %>%
+  filter(delta_in_minuten > 0 & delta_in_minuten >= delta_plus_allowed
+         | delta_in_minuten < 0 & delta_in_minuten <= delta_min_allowed) %>%
+  distinct()
+
 
 n_length_checks <- ipls_length_check %>% nrow()
 ipls_notification <- ""
@@ -97,11 +104,11 @@ if (n_length_checks > 0) {
       )
   }
   
-  flog.info("2. Playlist-lengte wijkt af.", name = "ipls_log", encoding = "UTF-8")
-  flog.info(ipls_notification, name = "ipls_log", encoding = "UTF-8")
+  flog.info("2. Playlist-lengte wijkt af.", name = "ipls_log")
+  flog.info(ipls_notification, name = "ipls_log")
   
 } else {
-  flog.info("2. Playlist-lengtes zijn in orde.", name = "ipls_log", encoding = "UTF-8")
+  flog.info("2. Playlist-lengtes zijn in orde.", name = "ipls_log")
 }
 
 #+ locaties ----
@@ -124,11 +131,11 @@ if (n_ipls_invalid_drive > 0) {
       )
   }
   
-  flog.info("3. Audio staat op een dubieuze locatie.", name = "ipls_log", encoding = "UTF-8")
-  flog.info(ipls_notification, name = "ipls_log", encoding = "UTF-8")
+  flog.info("3. Audio staat op een dubieuze locatie.", name = "ipls_log")
+  flog.info(ipls_notification, name = "ipls_log")
   
 } else {
-  flog.info("3. Audiolocaties zijn in orde.", name = "ipls_log", encoding = "UTF-8")
+  flog.info("3. Audiolocaties zijn in orde.", name = "ipls_log")
 }
 
 #+ dead tracks ----
@@ -151,9 +158,9 @@ if (n_ipls_dead_track > 0) {
       )
   }
   
-  flog.info("4. Er zijn dead tracks.", name = "ipls_log", encoding = "UTF-8")
-  flog.info(ipls_notification, name = "ipls_log", encoding = "UTF-8")
+  flog.info("4. Er zijn dead tracks.", name = "ipls_log")
+  flog.info(ipls_notification, name = "ipls_log")
   
 } else {
-  flog.info("4. Geen dead tracks aangetroffen.", name = "ipls_log", encoding = "UTF-8")
+  flog.info("4. Geen dead tracks aangetroffen.", name = "ipls_log")
 }
