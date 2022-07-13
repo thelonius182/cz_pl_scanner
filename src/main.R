@@ -31,7 +31,8 @@ flog.info("= = = = = iTunes Playlist Scanner start = = = = =", name = "ipls_log"
 config <- read_yaml("config.yaml")
 
 uzm_path <- "//UITZENDMAC-2/macOS/Users/tech_1/Music/Radiologik/Schedule"
-log_path <- "//LOGMAC/Radiologik/Schedule"
+# log_path <- "//LOGMAC/Radiologik/Schedule"
+log_path <- "//LOGMAC/tech/Music/Radiologik/Schedule"
 
 # is RL compleet? ----
 source("src/check_for_holes.R", encoding = "UTF-8")

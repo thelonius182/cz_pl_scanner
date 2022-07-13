@@ -56,13 +56,13 @@ sched.IIa <- sched.II %>%
 # //LOGMAC/Radiologik/Schedule/017 - 2020-01-30_do14_120_CZ-Archief
 sched.IV <- dir_info(path = log_path) %>%
   mutate(
-    script_item = str_sub(path, 30, 32),
-    script_date = str_sub(path, 36, 45),
-    script_hour = str_sub(path, 49, 50),
-    script_length = str_sub(path, 52, 54),
+    script_item = str_sub(path, 41, 43),
+    script_date = str_sub(path, 47, 56),
+    script_hour = str_sub(path, 60, 61),
+    script_length = str_sub(path, 63, 65),
     slot_name = str_replace(
       path,
-      "//LOGMAC/Radiologik/Schedule/\\d{3} - [0-9]{4}-[0-9]{2}-[0-9]{2}_\\w{2}[0-9]{2}_[0-9]{3}_",
+      "//LOGMAC/tech/Music/Radiologik/Schedule/\\d{3} - [0-9]{4}-[0-9]{2}-[0-9]{2}_\\w{2}[0-9]{2}_[0-9]{3}_",
       ""
     )
   ) %>%
