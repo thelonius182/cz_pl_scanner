@@ -3,8 +3,8 @@ delta_min_allowed <- -0.17 # audio mag tot ca. 10 seconden te kort zijn
 delta_plus_allowed <- 2.5 # mag tot 2,5 minuut te lang zijn (vanwege hijack cue's)
 
 # hier staan de apple-script dumps
-ipls_dir_info_uzm <- dir_info(path = "//uitzendmac-2/macOS/Users/tech_1/Documents/Salsa/IPS-output")
-ipls_dir_info_lgm <- dir_info(path = "//logmac/tech/Documents/Salsa/IPS-output")
+ipls_dir_info_uzm <- dir_info(path = "//uitzendmac-2/macOS/Users/tech_1/Documents/Salsa/IPS-output") 
+ipls_dir_info_lgm <- dir_info(path = "//logmac/tech/Documents/Salsa/IPS-output") 
 
 # namen vd actuele dumps  ----
 ipls_file_uzm <- ipls_dir_info_uzm %>% 
@@ -75,14 +75,10 @@ ipls_playtime <- ipls_info %>%
 #+ lengtes ----
 
 ipls_length_check <- 
-  suppressMessages(ipls_weekschema %>%
-                     left_join(ipls_playtime)
-  ) %>%
-  mutate(delta_in_minuten = playtime_aangetroffen - playtime_verwacht) %>%
+  ipls_weekschema %>% left_join(ipls_playtime) %>%
+  mutate(delta_in_minuten = playtime_aangetroffen - playtime_verwacht) %>% distinct() %>% 
   filter(delta_in_minuten > 0 & delta_in_minuten >= delta_plus_allowed
-         | delta_in_minuten < 0 & delta_in_minuten <= delta_min_allowed) %>%
-  distinct()
-
+         | delta_in_minuten < 0 & delta_in_minuten <= delta_min_allowed)
 
 n_length_checks <- ipls_length_check %>% nrow()
 ipls_notification <- ""

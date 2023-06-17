@@ -1,29 +1,6 @@
-# = = = = = = = = =
 # Check vulling van de wekelijkse playlists
-# = = = = = = = = =
 
-# - - - - - - - - -
-# Init
-# - - - - - - - - -
-suppressWarnings(library(tidyr))
-# library(knitr)
-# library(rmarkdown)
-# library(googlesheets)
-# library(RCurl)
-suppressWarnings(suppressPackageStartupMessages(library(yaml)))
-suppressWarnings(suppressPackageStartupMessages(library(magrittr)))
-suppressWarnings(suppressPackageStartupMessages(library(stringr)))
-suppressWarnings(suppressPackageStartupMessages(library(dplyr)))
-suppressWarnings(suppressPackageStartupMessages(library(purrr)))
-suppressWarnings(suppressPackageStartupMessages(library(lubridate)))
-suppressWarnings(suppressPackageStartupMessages(library(fs)))
-suppressWarnings(suppressPackageStartupMessages(library(readr)))
-suppressWarnings(suppressPackageStartupMessages(library(futile.logger)))
-# library(keyring)
-# library(RMySQL)
-# library(officer)
-
-filter <- dplyr::filter # voorkom verwarring met stats::filter
+pacman::p_load(tidyr, yaml, magrittr, stringr, purrr, lubridate, fs, readr, futile.logger, dplyr)
 
 fa <- flog.appender(appender.file("/Users/scanner/Logs/ipl_scanner.log"), name = "ipls_log")
 flog.info("= = = = = iTunes Playlist Scanner start = = = = =", name = "ipls_log")
@@ -31,7 +8,6 @@ flog.info("= = = = = iTunes Playlist Scanner start = = = = =", name = "ipls_log"
 config <- read_yaml("config.yaml")
 
 uzm_path <- "//UITZENDMAC-2/macOS/Users/tech_1/Music/Radiologik/Schedule"
-# log_path <- "//LOGMAC/Radiologik/Schedule"
 log_path <- "//LOGMAC/tech/Music/Radiologik/Schedule"
 
 # is RL compleet? ----

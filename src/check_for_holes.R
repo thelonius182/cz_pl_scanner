@@ -1,17 +1,20 @@
 # verzamel scripts op FS ----
 # om te kijken of de reeks compleet is
 
-#+ OE ---- 
+#+ NS-entries ---- 
 # bv //UITZENDMAC-2/macOS/Users/tech_1/Music/Radiologik/Schedule/021 - 2022-06-22_wo07-180_ochtendeditie
 #    ^
 #    37
-sched.I <- dir_info(path = uzm_path) %>%
-  filter(str_detect(path, "ochtendeditie")) %>%
+sched.I <- dir_info(path = uzm_path) %>% as_tibble() %>% 
+  # NS-entries: detect ...ma09-060... (instead of ...ma09_060...). So dash, not underscore
+  filter(str_detect(path, ".*?/Schedule/.*\\w{2}\\d{2}-(\\d{3}).*")) %>%
   mutate(
     script_item = sub(".*?/Schedule/\\b(\\d{3})\\b.*", "\\1", path, perl=TRUE, ignore.case=TRUE),
     script_date = sub(".*?/Schedule/.*(\\d{4}-\\d{2}-\\d{2}).*", "\\1", path, perl=TRUE, ignore.case=TRUE),
     script_hour = sub(".*?/Schedule/.*_\\w{2}(\\d{2}).*", "\\1", path, perl=TRUE, ignore.case=TRUE),
-    script_length = sub(".*?/Schedule/.*\\w{2}\\d{2}-(\\d{3}).*", "\\1", path, perl=TRUE, ignore.case=TRUE)
+    script_length = sub(".*?/Schedule/.*\\w{2}\\d{2}-(\\d{3}).*", "\\1", path, perl=TRUE, ignore.case=TRUE),
+    script_title = sub(".*_[a-z]{2}[0-9]{2}[_-]\\d{3}_(.*)_\\(herhaling\\)", "\\1", path, perl=TRUE),
+    script_title = sub("(?!.*herhaling).*_[a-z]{2}[0-9]{2}[_-]\\d{3}_(.*)", "\\1", script_title, perl=TRUE)
   ) %>%
   select(starts_with("script"),-script_item)
 
@@ -19,7 +22,7 @@ sched.Ia <- sched.I %>%
   mutate(
     slot_start = ymd_hms(paste0(script_date, " ", script_hour, ":00:00")),
     slot_stop = slot_start + minutes(as.integer(script_length)),
-    slot_name = "Ochtendeditie"
+    slot_name = script_title
   ) %>%
   select(starts_with("slot"))
 
